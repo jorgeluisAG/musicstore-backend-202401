@@ -1,4 +1,6 @@
+using Microsoft.EntityFrameworkCore;
 using MusicStore.Entities;
+using MusicStore.Persistence;
 using MusicStore.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -10,8 +12,14 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+//Configuring context
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("defaultConnection"));
+});
+
 //Registering services
-builder.Services.AddSingleton<GenreRepository>();
+builder.Services.AddTransient<IGenreRepository,GenreRepository>();
 
 var app = builder.Build();
 
@@ -27,17 +35,17 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 // esto minimalistas se usan en ocasiones No es que no sea recomendable, pero siempre va el "Depende" de lo que necesites
-app.MapGet("api/holamundo", () => "hola mundo" );
-app.MapGet("api/genresminimal", (GenreRepository repository) =>
-{
-    return repository.Get();
-});
-
-app.MapPost("api/genresminimal", (Genre genre, GenreRepository repository) =>
-{
-    repository.Add(genre);
-    return Results.Ok(genre);
-});
+//app.MapGet("api/holamundo", () => "hola mundo" );
+//app.MapGet("api/genresminimal", (GenreRepository repository) =>
+//{
+//    return repository.Get();
+//});
+//
+//app.MapPost("api/genresminimal", (Genre genre, GenreRepository repository) =>
+//{
+//    repository.Add(genre);
+//    return Results.Ok(genre);
+//});
 
 
 app.MapControllers();

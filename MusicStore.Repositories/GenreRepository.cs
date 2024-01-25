@@ -1,62 +1,106 @@
-﻿using MusicStore.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using MusicStore.Dto.Request;
+using MusicStore.Dto.Response;
+using MusicStore.Entities;
+using MusicStore.Persistence;
 
 namespace MusicStore.Repositories
 {
-    public class GenreRepository
+    public class GenreRepository : IGenreRepository
     {
-        private readonly List<Genre> genreList = new List<Genre>();
+        private readonly ApplicationDbContext context;
 
         //Constructor
-        public GenreRepository()
+        public GenreRepository(ApplicationDbContext context)
         {
-            genreList.Add(new Genre() { Id = 1, Name = "Salsa" });
-            genreList.Add(new Genre() { Id = 3, Name = "Cumbia" });
-            genreList.Add(new Genre() { Id = 4, Name = "Electro" });
+            this.context = context;
         }
 
         //Métodos
-        public List<Genre> Get()
+        public async Task<List<GenreResponseDto>> GetAsync()
         {
-            return genreList;
-        }
+            var items =  await context.Set<Genre>()
+                .AsNoTracking()
+                .ToListAsync();
 
-        public Genre? Get(int id)
-        {
-            return genreList.FirstOrDefault(x => x.Id == id);
-        }
-
-        public void Add(Genre genre)
-        {
-            genre.Id = genreList.MaxBy(x => x.Id).Id + 1;
-            genreList.Add(genre);
-        }
-
-        public void Update (int id, Genre genre)
-        {
-            var item = Get(id);
-
-            if(item is not null)
+            //Mapping
+            var genresResponseDto = items.Select(x=> new GenreResponseDto
             {
-                item.Name = genre.Name;
-                item.Status = genre.Status;
+                Id = x.Id,
+                Name = x.Name,
+                Status = x.Status,
+            }).ToList();
+            return genresResponseDto;
+        }
+
+        public async Task<GenreResponseDto?> GetAsync(int id)
+        {
+            var item = await context.Set<Genre>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            var genreResponseDto = new GenreResponseDto();
+            if (item is not null)
+            {
+                //Mapping
+                genreResponseDto.Id = item.Id;
+                genreResponseDto.Name = item.Name;
+                genreResponseDto.Status = item.Status;
+
             }
             else
-            {
-                throw new InvalidOperationException();
-            }
+                throw new InvalidOperationException($"No se encontró el registro con id {id}.");
+
+            return genreResponseDto;
         }
 
-        public void Delete(int id)
+        public async Task<int> AddAsync(GenreRequestDto genreRequestDto)
         {
-            var item = Get(id);
+            //Mapping
+            var genre = new Genre
+            {
+                Name = genreRequestDto.Name,
+                Status = genreRequestDto.Status,
+            };
+            context.Set<Genre>().Add(genre);
+            await context.SaveChangesAsync();
+            return genre.Id;
+        }
+
+        public async Task UpdateAsync(int id, GenreRequestDto genreRequestDto)
+        {
+            var item = await context.Set<Genre>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
 
             if (item is not null)
             {
-                genreList.Remove(item);
+                //Mapping      
+                item.Name = genreRequestDto.Name;
+                item.Status = genreRequestDto.Status;
+                context.Update(item);
+                await context.SaveChangesAsync();
             }
             else
             {
-                throw new InvalidOperationException();
+                throw new InvalidOperationException($"No se encontró el registro con id {id}.");
+            }
+        }
+
+        public async Task DeleteAsync(int id)
+        {
+            var item = await context.Set<Genre>()
+                .AsNoTracking()
+                .FirstOrDefaultAsync(x => x.Id == id);
+
+            if (item is not null)
+            {
+                context.Set<Genre>().Remove(item);
+                await context.SaveChangesAsync();
+            }
+            else
+            {
+                throw new InvalidOperationException($"No se encontró el registro con id {id}.");
             }
         }
 
