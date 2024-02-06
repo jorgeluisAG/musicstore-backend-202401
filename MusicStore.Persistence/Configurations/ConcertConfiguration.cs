@@ -11,7 +11,7 @@ namespace MusicStore.Persistence.Configurations
             builder.Property(x => x.Title).HasMaxLength(100);
             builder.Property(x => x.Description).HasMaxLength(200);
             builder.Property(x => x.Place).HasMaxLength(100);
-            builder.Property(x => x.UnitPrice).HasColumnType("decimal(10,2");
+            builder.Property(x => x.UnitPrice).HasColumnType("decimal(10,2)");
             builder.Property(x => x.DataEvent)
                 .HasColumnType("datetime")
                 .HasDefaultValueSql("GETDATE()");
