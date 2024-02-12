@@ -11,7 +11,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicStore.Repositories", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicStore.Persistence", "MusicStore.Persistence\MusicStore.Persistence.csproj", "{A4DADC39-669E-43D1-A739-1B311DCDA77B}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicStore.Dto", "MusicStore.Dto\MusicStore.Dto.csproj", "{C7DE677A-7220-4582-860F-AED529205F40}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MusicStore.Dto", "MusicStore.Dto\MusicStore.Dto.csproj", "{C7DE677A-7220-4582-860F-AED529205F40}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MusicStore.Services", "MusicStore.Services\MusicStore.Services.csproj", "{E7B7F2F3-D351-45B1-84E1-A05073077C8B}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,6 +41,10 @@ Global
 		{C7DE677A-7220-4582-860F-AED529205F40}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C7DE677A-7220-4582-860F-AED529205F40}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C7DE677A-7220-4582-860F-AED529205F40}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7B7F2F3-D351-45B1-84E1-A05073077C8B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7B7F2F3-D351-45B1-84E1-A05073077C8B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7B7F2F3-D351-45B1-84E1-A05073077C8B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7B7F2F3-D351-45B1-84E1-A05073077C8B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
