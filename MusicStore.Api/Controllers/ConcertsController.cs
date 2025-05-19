@@ -34,45 +34,34 @@ namespace MusicStore.Api.Controllers
         public async Task<IActionResult> Get(int id)
         {
             var response = await service.GetAsync(id);
+            return response.Success ? Ok(response) : NotFound(response);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Post(ConcertRequestDto request)
+        {
+            var response = await service.AddAsync(request);
             return response.Success ? Ok(response) : BadRequest(response);
         }
 
-        //[HttpPost]
-        //public async Task<IActionResult> Post(ConcertRequestDto concertRequestDto)
-        //{
-        //    var response = new BaseResponseGeneric<int>();
-        //    try
-        //    {
-        //        // validating genre Id
-        //        var genre = await genreRepository.GetAsync(concertRequestDto.GenreId);
-        //        if (genre is null)
-        //        {
-        //            response.ErrorMessage = $"El id del género {concertRequestDto.GenreId} es incorrecto.";
-        //            logger.LogWarning(response.ErrorMessage);
-        //            return BadRequest(response);
-        //        }
+        [HttpPut("{id:int}")]
+        public async Task<IActionResult> Put(int id, ConcertRequestDto request)
+        {
+            var response = await service.UpdateAsync(id, request);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
 
-        //        //Mapping
-        //        var concertDb = new Concert
-        //        {
-        //            Title = concertRequestDto.Title,
-        //            Description = concertRequestDto.Description,
-        //            Place = concertRequestDto.Place,
-        //            UnitPrice = concertRequestDto.UnitPrice,
-        //            GenreId = concertRequestDto.GenreId,
-        //            DataEvent = concertRequestDto.DataEvent,
-        //            ImageUrl = concertRequestDto.ImageUrl,
-        //            TicketsQuantity = concertRequestDto.TicketsQuantity,
-        //        };
-        //        response.Data = await repository.AddAsync(concertDb);
-        //        response.Success = true;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        response.ErrorMessage = "Ocurrió un error al guardar la información.";
-        //        logger.LogError(ex, ex.Message);
-        //    }
-        //    return Ok(response);
-        //}
+        [HttpDelete("{id:int}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var response = await service.DeleteAsync(id);
+            return response.Success ? Ok(response) : BadRequest(response);
+        }
+
+        [HttpPatch("{id:int}")]
+        public async Task<IActionResult> Patch(int id)
+        {
+            return Ok(await service.FinalizeAsync(id));
+        }
     }
 }

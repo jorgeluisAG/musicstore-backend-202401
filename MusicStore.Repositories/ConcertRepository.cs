@@ -12,21 +12,13 @@ namespace MusicStore.Repositories
 
         }
 
-        //public override async Task<ICollection<Concert>> GetAsync()
-        //{
-        //    //eager loading approach
-        //    return await context.Set<Concert>()
-        //        .Include(x=>x.Genre)
-        //        .AsNoTracking()
-        //        .ToListAsync();
-        //}
-
         public async Task<ICollection<Concertinfo>> GetAsync(string? title)
         {
             //optimized eager loading approach
             return await context.Set<Concert>()
                 .Include(x => x.Genre)
                 .Where(x => x.Title.Contains(title ?? string.Empty))
+                .IgnoreQueryFilters()
                 .AsNoTracking()
                 .Select(x => new Concertinfo
                 {
@@ -72,6 +64,16 @@ namespace MusicStore.Repositories
             //raw query
             //var query = context.Set<Concertinfo>().FromSqlRaw("usp_ListConcerts {0}", title ?? string.Empty);
             //return await query.ToListAsync();
+        }
+
+        public async Task FinalizeAsync(int id)
+        {
+            var entity = await GetAsync(id);
+            if(entity is not null)
+            {
+                entity.Finalized = true;
+                await UpdateAsync();
+            }
         }
     }
 }

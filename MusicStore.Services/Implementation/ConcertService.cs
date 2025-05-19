@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
+using Azure.Core;
 using Microsoft.Extensions.Logging;
 using MusicStore.Dto;
 using MusicStore.Dto.Request;
 using MusicStore.Dto.Response;
+using MusicStore.Entities;
 using MusicStore.Repositories;
 using MusicStore.Services.Interface;
 
@@ -43,7 +45,7 @@ namespace MusicStore.Services.Implementation
             {
                 var data = await repository.GetAsync(id);
                 response.Data = mapper.Map<ConcertResponseDto>(data);
-                response.Success = true;
+                response.Success = data != null;
             }
             catch (Exception ex)
             {
@@ -53,22 +55,73 @@ namespace MusicStore.Services.Implementation
             return response;
         }
 
-        public Task<BaseResponseGeneric<int>> AddAsync(ConcertRequestDto concertRequestDto)
+        public async Task<BaseResponseGeneric<int>> AddAsync(ConcertRequestDto request)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponseGeneric<int>();
+            try
+            {
+                response.Data = await repository.AddAsync(mapper.Map<Concert>(request));
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Ocurrió un error al insertar la informacion.";
+                logger.LogError(ex, "{ErrorMessage} {Message}", response.ErrorMessage, ex.Message);
+            }
+            return response;
         }
-        public Task<BaseResponse> UpdateAsync(int id, ConcertRequestDto request)
+        public async Task<BaseResponse> UpdateAsync(int id, ConcertRequestDto request)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse();
+            try
+            {
+                var data = await repository.GetAsync(id);
+                if (data is null)
+                {
+                    response.ErrorMessage = "El registro no fue encontrado";
+                    return response;
+                }
+                mapper.Map(request, data);
+                await repository.UpdateAsync();
+                response.Success = true;    
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Ocurrió un error al actualizar.";
+                logger.LogError(ex, "{ErrorMessage} {Message}", response.ErrorMessage, ex.Message);
+            }
+            return response;
         }
-        public Task<BaseResponse> DeleteAsync(int id)
+        public async Task<BaseResponse> DeleteAsync(int id)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse();
+            try
+            {
+                await repository.DeleteAsync(id);
+                response.Success = true;
+            }
+            catch (Exception ex)
+            {
+                response.ErrorMessage = "Ocurrió un error al eliminar.";
+                logger.LogError(ex, "{ErrorMessage} {Message}", response.ErrorMessage, ex.Message);
+            }
+            return response;
         }
 
-        public Task<BaseResponse> FinalizeAsync(int id)
+        public async Task<BaseResponse> FinalizeAsync(int id)
         {
-            throw new NotImplementedException();
+            var response = new BaseResponse();
+            try
+            {
+                await repository.FinalizeAsync(id);
+                response.Success = true;
+            }
+            catch(Exception ex)
+            {
+                response.ErrorMessage = "Ocurrió un error al finalizar un evento.";
+                logger.LogError(ex, "{ErrorMessage} {Message}", response.ErrorMessage, ex.Message);
+            }
+            return response;
         }
 
 

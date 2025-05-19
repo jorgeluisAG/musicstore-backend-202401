@@ -12,6 +12,8 @@ namespace MusicStore.Persistence.Configurations
             builder.Property(x => x.Name).HasMaxLength(50);
 
             builder.ToTable("Genres", schema: "Musicales");
+
+            builder.HasQueryFilter(x => x.Status);
         }
     }
 }

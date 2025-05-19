@@ -6,5 +6,6 @@ namespace MusicStore.Repositories
     public interface IConcertRepository : IRepositoryBase<Concert>
     {
         Task<ICollection<Concertinfo>> GetAsync(string? title);
+        Task FinalizeAsync(int id);
     }
 }
